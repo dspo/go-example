@@ -1,0 +1,36 @@
+version: '1.0'
+name: pipeline-20250929
+displayName: 构建
+triggers:
+  trigger: auto
+  push:
+    branches:
+      precise:
+        - master
+  pr:
+    branches:
+      precise:
+        - master
+stages:
+  - name: stage-e0de00e8
+    displayName: 构建
+    strategy: naturally
+    trigger: auto
+    executor: []
+    steps:
+      - step: build@docker
+        name: build_docker
+        displayName: 镜像构建
+        type: account
+        repository: registry.cn-hangzhou.aliyuncs.com/dspo
+        username: '15957155411'
+        password: runrun524299
+        tag: go-exmaple-app0:dev
+        dockerfile: ./Dockerfile/app0.Dockerfile
+        context: ''
+        artifacts: []
+        isCache: false
+        parameter: {}
+        notify: []
+        strategy:
+          retry: '0'

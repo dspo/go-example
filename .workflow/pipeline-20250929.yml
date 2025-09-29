@@ -11,6 +11,8 @@ triggers:
     branches:
       precise:
         - master
+variables:
+  DOCKER_REGISTRY_MIRROR: https://9ed24hl3.mirror.aliyuncs.com
 stages:
   - name: stage-e0de00e8
     displayName: 构建

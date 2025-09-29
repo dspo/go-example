@@ -1,0 +1,60 @@
+version: "2"
+run:
+  allow-parallel-runners: true
+linters:
+  settings:
+    errcheck:
+      exclude-functions:
+        - (*sql.DB).Close
+        - (io.Closer).Close
+        - (*os.File).Close
+        - (*net.Conn).Close
+        - (*http.Response.Body).Close
+        - (*bufio.Reader).Close
+        - (*bufio.Writer).Close
+        - (*bytes.Buffer).Close
+        - (*strings.Reader).Close
+        - (*tar.Reader).Close
+        - (*gzip.Reader).Close
+        - (*zip.ReadCloser).Close
+    staticcheck:
+      checks:
+        - "all"
+        - "-QF1001"
+        - "-QF1003"
+        - "-QF1004"
+        - "-QF1008"
+        - "-ST1000"
+        - "-ST1001"
+        - "-ST1003"
+        - "-ST1019"
+        - "-ST1012"
+        - "-ST1016"
+  default: none
+  enable:
+    - errcheck
+    - staticcheck
+  exclusions:
+    generated: lax
+    rules:
+      - linters:
+          - lll
+        path: api/*
+      - linters:
+          - dupl
+          - lll
+        path: internal/*
+    paths:
+      - third_party$
+      - builtin$
+      - examples$
+formatters:
+  enable:
+    - gofmt
+    - goimports
+  exclusions:
+    generated: lax
+    paths:
+      - third_party$
+      - builtin$
+      - examples$

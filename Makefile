@@ -23,11 +23,12 @@ ifeq ($(shell uname -m), aarch64)
 	GOARCH = arm64
 endif
 
-before-build: gofmt openapi
+lint: gofmt openapi
 	go mod tidy
 	go vet ./...
+	# todo: add more lint like golangci-lint
 
-build-app0-image: before-build
+build-app0-image:
 	docker build -f Dockerfile/app0.Dockerfile -t go-example-app0:${IMAGE_TAG} .
 
 push-app0-image:

@@ -4,6 +4,7 @@ REGISTRY ?= registry.cn-hangzhou.aliyuncs.com/dspo
 IMAGE_TAG ?= dev
 
 KIND_NAME ?= go-example-e2e
+CLUSTER_NAME ?= go-example-e2e
 
 export KUBECONFIG = /tmp/$(CLUSTER_NAME).kubeconfig
 

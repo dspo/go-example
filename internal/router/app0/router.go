@@ -15,9 +15,9 @@ func NewRouter(app ApplicationContext) http.Handler {
 
 func mount(app ApplicationContext) {
 	app.Engine.GET("/healthz", common.HealthzHandler())
-	app.Engine.GET("/v1/version", common.VersionHandler())
+	app.Engine.GET("/api/v1/version", common.VersionHandler())
 
-	app.Engine.Any("/v1/echo", func(c *gin.Context) {
+	app.Engine.Any("/api/v1/echo", func(c *gin.Context) {
 		c.Writer.Header().Set("Content-Type", "application/json")
 		c.Writer.WriteHeader(http.StatusOK)
 		c.JSON(http.StatusOK, gin.H{

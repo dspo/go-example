@@ -4,6 +4,8 @@ REGISTRY ?= registry.cn-hangzhou.aliyuncs.com/dspo
 IMAGE_TAG ?= dev
 
 KIND_NAME ?= go-example-e2e
+CLUSTER_NAME ?= go-example-e2e
+E2E_NAMESPACE ?= go-example-e2e
 
 export KUBECONFIG = /tmp/$(CLUSTER_NAME).kubeconfig
 
@@ -22,6 +24,7 @@ ifeq ($(shell uname -m), aarch64)
 endif
 
 before-build: gofmt openapi
+	go mod tidy
 	go vet ./...
 
 build-app0-image: before-build
@@ -51,7 +54,8 @@ e2e: kind-up build-app0-image build-ginkgo-image kind-load-images e2e-run
 e2e-ginkgo: build-ginkgo-image kind-load-images e2e-run
 
 e2e-run:
-	@kubectl -n go-example-e2e delete deployment -l testGroup=application
+	@kubectl delete deployment -l testGroup=application --all-namespaces
+	@kubectl apply -f test/framework/manifests/namespace.yaml
 	@kubectl apply -f test/framework/manifests/configmap.yaml
 	@kubectl apply -f test/framework/manifests/ginkgo.yaml
 	@kubectl run -n go-example-e2e --rm -i ginkgo --env="DB=mysql" --image ginkgo:dev --overrides='{"spec":{"serviceAccount":"ginkgo" }}' --restart=Never

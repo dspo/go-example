@@ -1,0 +1,93 @@
+name: Run E2E Test Suites
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - master
+  pull_request:
+    types:
+      - opened
+      - synchronize
+      - reopened
+      - ready_for_review
+      - labeled
+    branches:
+      - master
+      - dev
+      - feature/**
+      - release/**
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+permissions: read-all
+jobs:
+  changes:
+    if: '! github.event.pull_request.draft'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      src: ${{ steps.filter.outputs.src }}
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+    - uses: dorny/paths-filter@v2
+      id: filter
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        filters: |
+          src:
+            - '*.go'
+            - '**/*.go'
+            - 'go.mod'
+            - 'go.sum'
+            - 'Makefile'
+            - 'Dockerfiles/**'
+            - 'test/e2e/**/*'
+            - '.github/**'
+            - 'pkg/**'
+            - 'internal/**'
+            - 'openapi/**'
+  run-test:
+    needs: changes
+    if: |
+      (needs.changes.outputs.src == 'true')
+    strategy:
+      fail-fast: false
+      matrix:
+        db: [mysql]
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+    - uses: actions/checkout@v3
+    - name: Install kind
+      run: |
+        curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.23.0/kind-linux-amd64
+        chmod +x ./kind
+        sudo mv kind /usr/local/bin
+    - name: Setup Go Environment
+      uses: actions/setup-go@v3
+      with:
+        go-version: "1.24.0"
+    - name: Run E2E Test Cases
+      working-directory: ./
+      env:
+        ENV_EXAMPLE: "example value"
+      run: |
+        DB=${{ matrix.db }} make GOCOVER="-cover -coverpkg=./..." e2e
+    - name: Print Components Logs
+      if: failure()
+      env:
+        KUBECONFIG: /tmp/go-example-e2e.kubeconfig
+      run: |
+        kubectl get pods -o=name -n go-example-e2e | xargs -I{} bash -c "echo ================= {} ==================== &&  kubectl logs --all-containers -n go-example-e2e {} && echo ================= {} ===================="
+    - name: ReportCoverage
+      env:
+        KUBECONFIG: /tmp/api7ee3.kubeconfig
+      run: |
+        echo 'Not implement yet'
+    - name: Upload Coverage.out
+      run: |
+        echo 'Not implement yet'
+    - name: Upload coverage reports to Codecov
+      run: |
+        echo 'Not implement yet'

@@ -23,6 +23,7 @@ ifeq ($(shell uname -m), aarch64)
 endif
 
 before-build: gofmt openapi
+	go mod tidy
 	go vet ./...
 
 build-app0-image: before-build

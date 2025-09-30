@@ -3,11 +3,7 @@ on:
   workflow_dispatch:
   push:
     branches:
-      - main
       - master
-      - dev
-      - feature/**
-      - release/**
   pull_request:
     types:
       - opened
@@ -16,7 +12,6 @@ on:
       - ready_for_review
       - labeled
     branches:
-      - main
       - master
       - dev
       - feature/**

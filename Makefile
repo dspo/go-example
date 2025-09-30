@@ -54,7 +54,7 @@ e2e: kind-up build-app0-image build-ginkgo-image kind-load-images e2e-run
 e2e-ginkgo: build-ginkgo-image kind-load-images e2e-run
 
 e2e-run:
-	@kubectl --all-namespaces delete deployment -l testGroup=application
+	@kubectl delete deployment -l testGroup=application --all-namespaces
 	@kubectl apply -f test/framework/manifests/configmap.yaml --create-namespace ${E2E_NAMESPACE}
 	@kubectl apply -f test/framework/manifests/ginkgo.yaml
 	@kubectl run -n go-example-e2e --rm -i ginkgo --env="DB=mysql" --image ginkgo:dev --overrides='{"spec":{"serviceAccount":"ginkgo" }}' --restart=Never

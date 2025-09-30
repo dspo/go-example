@@ -28,7 +28,7 @@ permissions: read-all
 jobs:
   changes:
     if: '! github.event.pull_request.draft'
-    runs-on: buildjet-2vcpu-ubuntu-2204-arm
+    runs-on: ubuntu-latest
     timeout-minutes: 5
     outputs:
       src: ${{ steps.filter.outputs.src }}
@@ -62,7 +62,7 @@ jobs:
       fail-fast: false
       matrix:
         db: [mysql]
-    runs-on: buildjet-4vcpu-ubuntu-2204
+    runs-on: ubuntu-latest
     timeout-minutes: 60
     steps:
     - uses: actions/checkout@v3

@@ -27,7 +27,7 @@ stages:
         repository: registry.cn-hangzhou.aliyuncs.com/dspo
         username: '15957155411'
         password: runrun524299
-        tag: go-exmaple-app0:dev
+        tag: go-example-app0:dev
         dockerfile: ./Dockerfile/app0.Dockerfile
         context: ''
         artifacts: []

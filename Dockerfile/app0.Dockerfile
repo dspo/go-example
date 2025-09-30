@@ -4,6 +4,8 @@ WORKDIR /go/src/app
 
 COPY . .
 
+ENV GOPROXY=https://goproxy.cn,direct
+
 RUN go build -o app0 cmd/app0/main.go
 
 FROM ubuntu

@@ -68,6 +68,8 @@ jobs:
       uses: actions/setup-go@v3
       with:
         go-version: "1.24.0"
+    - name: Docker Login
+      run: docker login docker.cnb.cool -u cnb -p ${{ secret.CND_TOKEN }}
     - name: Run E2E Test Cases
       working-directory: ./
       env:

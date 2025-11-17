@@ -1,4 +1,4 @@
-FROM ubuntu/go:1.24-25.04_edge AS builder
+FROM docker.cnb.cool/dspo-group/go-example2/ubuntu-go:latest AS builder
 
 WORKDIR /go/src/app
 
@@ -9,7 +9,7 @@ ENV GOPROXY=https://goproxy.cn,direct
 RUN go mod tidy
 RUN go build -o app0 cmd/app0/main.go
 
-FROM ubuntu
+FROM docker.cnb.cool/dspo-group/go-example2/ubuntu:latest
 COPY --from=builder /go/src/app/app0 /app0
 
 EXPOSE 8080

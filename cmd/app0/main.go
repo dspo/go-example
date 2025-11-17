@@ -16,7 +16,10 @@ import (
 
 	"gitee.com/huajinet/go-example/internal/common"
 	_ "gitee.com/huajinet/go-example/internal/common"
+	"gitee.com/huajinet/go-example/internal/dao"
 	"gitee.com/huajinet/go-example/internal/router/app0"
+	"gitee.com/huajinet/go-example/internal/service"
+	"gitee.com/huajinet/go-example/pkg/database"
 	"gitee.com/huajinet/go-example/pkg/engine"
 )
 
@@ -117,6 +120,9 @@ func run(cmd *cobra.Command, args []string) {
 		fx.Provide(NewHTTPServer),
 		fx.Provide(app0.NewRouter),
 		fx.Provide(engine.New),
+		fx.Provide(database.NewGorm),
+		fx.Provide(service.NewBook),
+		fx.Provide(dao.NewBook),
 	)
 	app.Run()
 }

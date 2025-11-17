@@ -1,4 +1,4 @@
-FROM ubuntu/go:1.24-25.04_edge AS builder
+FROM docker.cnb.cool/dspo-group/go-example2/ubuntu-go:latest AS builder
 
 WORKDIR /go/src/app
 
@@ -24,7 +24,7 @@ RUN chmod +x /go/src/app/bin/ginkgo
 WORKDIR /go/src/app/test/e2e
 RUN /go/src/app/bin/ginkgo build -r
 
-FROM ubuntu
+FROM docker.cnb.cool/dspo-group/go-example2/ubuntu:latest
 
 WORKDIR /usr/local/huayi
 

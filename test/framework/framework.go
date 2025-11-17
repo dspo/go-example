@@ -2,6 +2,7 @@ package framework
 
 import (
 	"context"
+	"database/sql"
 	_ "embed"
 	"fmt"
 	"log"
@@ -10,8 +11,11 @@ import (
 
 	"github.com/gruntwork-io/terratest/modules/k8s"
 	"go.uber.org/zap"
+	"gorm.io/gorm"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/util/wait"
+
+	"gitee.com/huajinet/go-example/pkg/database"
 )
 
 const (
@@ -21,6 +25,9 @@ const (
 var (
 	//go:embed manifests/app0.yaml
 	_app0Spec string
+
+	//go:embed manifests/mysql.yaml
+	_mysqlSpec string
 )
 
 var (
@@ -39,6 +46,7 @@ func init() {
 
 type Framework struct {
 	scaffold *KubernetesScaffold
+	db       *gorm.DB
 }
 
 func GetFramework() *Framework {
@@ -48,8 +56,14 @@ func GetFramework() *Framework {
 	return _f
 }
 
+func (f *Framework) DB() *gorm.DB {
+	return f.db
+}
+
 func (f *Framework) DeployComponents(t *testing.T) {
 	f.deployDatabase(t)
+	f.initDatabase(t)
+	f.connectDatabase(t)
 	f.deployApp0(t)
 	f.deployApp1(t)
 }
@@ -68,7 +82,34 @@ func (f *Framework) deployApp1(t *testing.T) {
 }
 
 func (f *Framework) deployDatabase(t *testing.T) {
-	// not implement yet
+	t.Log("it is going to deploy MySQL")
+	err := k8s.KubectlApplyFromStringE(t, f.scaffold.kubectlOptions, _mysqlSpec)
+	assertNilErr(t, err)
+
+	err = f.ensureServiceWithTimeout(t.Context(), "mysql", f.scaffold.kubectlOptions.Namespace, 1, 60)
+	assertNilErr(t, err)
+}
+
+func (f *Framework) initDatabase(t *testing.T) {
+	t.Log("it is going to init MySQL")
+	db, err := sql.Open("mysql", "root:changeme@tcp(mysql:3306)/")
+	assertNilErr(t, err)
+
+	defer func() { _ = db.Close() }()
+
+	err = db.Ping()
+	assertNilErr(t, err)
+
+	// try to drop database
+	_, err = db.Exec("DROP DATABASE IF EXISTS `go_dev`")
+	assertNilErr(t, err)
+
+	_, err = db.Exec("CREATE DATABASE IF NOT EXISTS `go_dev`")
+	assertNilErr(t, err)
+}
+
+func (f *Framework) connectDatabase(t *testing.T) {
+	f.db = database.NewGorm()
 }
 
 func (f *Framework) ensureServiceWithTimeout(ctx context.Context, name, namespace string, desiredEndpoints, timeout int) error {

@@ -64,7 +64,7 @@ e2e-run:
 .PHONY: kind-up
 kind-up:
 	@kind get clusters 2>&1 | grep -v $(KIND_NAME) \
-		&& kind create cluster --name $(KIND_NAME) \
+		&& kind create cluster --name $(KIND_NAME) --image docker.cnb.cool/dspo-group/go-example2/node:v1.34.0 \
 		|| echo "kind cluster already exists"
 	@kind get kubeconfig --name $(KIND_NAME) > $$KUBECONFIG
 	kubectl wait --for=condition=Ready nodes --all
@@ -77,5 +77,6 @@ kind-down:
 
 .PHONY: kind-load-images
 kind-load-images:
+	@kind load docker-image mysql:lts --name $(KIND_NAME)
 	@kind load docker-image go-example-app0:dev --name $(KIND_NAME)
 	@kind load docker-image ginkgo:dev --name $(KIND_NAME)

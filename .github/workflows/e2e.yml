@@ -69,7 +69,7 @@ jobs:
       with:
         go-version: "1.24.0"
     - name: Docker Login
-      run: docker login docker.cnb.cool -u cnb -p ${{ secrets.CND_TOKEN }}
+      run: docker login docker.cnb.cool -u cnb -p ${{ secrets.CNB_TOKEN }}
     - name: Run E2E Test Cases
       working-directory: ./
       env:

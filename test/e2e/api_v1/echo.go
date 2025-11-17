@@ -1,4 +1,4 @@
-package echo
+package api_v1
 
 import (
 	"github.com/onsi/ginkgo/v2"

@@ -6,7 +6,7 @@ import (
 	"github.com/onsi/ginkgo/v2"
 	"github.com/onsi/gomega"
 
-	_ "gitee.com/huajinet/go-example/test/e2e/echo"
+	_ "gitee.com/huajinet/go-example/test/e2e/api_v1"
 	"gitee.com/huajinet/go-example/test/framework"
 )
 

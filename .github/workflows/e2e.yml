@@ -68,8 +68,12 @@ jobs:
       uses: actions/setup-go@v3
       with:
         go-version: "1.24.0"
-    - name: Docker Login
-      run: docker login docker.cnb.cool -u cnb -p ${{ secrets.CNB_TOKEN }}
+    - name: Login to Docker Registry
+      uses: docker/login-action@v1
+      with:
+        registry: docker.cnb.cool
+        username: cnb
+        password: ${{ secrets.CNB_TOKEN }}
     - name: Run E2E Test Cases
       working-directory: ./
       env:
